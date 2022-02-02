@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api')
 const token = '5256724431:AAG4XHgxwtEGbus3HvSu31s0RNsaUFgNcaQ'
 const bot = new TelegramBot(token, { polling: true })
-const { gameOption, againOption } = require('.option.js')
+const { gameOption, againOption } = require('./option')
 
 const chats = {}
 
@@ -41,17 +41,18 @@ const start = () => {
         return bot.sendMessage(chatId, 'Я тебя не понимаю, давай по новой')
     })
 
-    bot.on('callback_query', msg => {
+    bot.on('callback_query', async msg => {
         const data = msg.data
         const chatId = msg.message.chat.id
         if(data === '/again'){
             return startGame(chatId)
         }
-        if(chats[chatId] === data){
-            return bot.sendMessage(chatId, `Ты угадал цифру ${chats[chatId]}`, againOption)
+        if(data == chats[chatId]){
+            await bot.sendMessage(chatId, `Ты угадал цифру ${chats[chatId]}`, againOption)
+            
         }
         else{
-            return bot.sendMessage(chatId, `Ты не угадал цифру ${chats[chatId]}, твой ответ ${data}`, againOption)
+            await bot.sendMessage(chatId, `Ты не угадал цифру ${chats[chatId]}, твой ответ ${data}`, againOption)
         }
     })
 }
